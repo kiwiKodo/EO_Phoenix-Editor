@@ -38,6 +38,7 @@
     "react-dom": "^18.2.0"
   },
   "build": {
+    "publish": null,
     "files": [
       "dist/**",
       "node_modules/**",
