@@ -1,0 +1,64 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Optional: install signing certificate (PFX)
+        if: ${{ secrets.SIGNING_PFX_BASE64 != '' }}
+        shell: pwsh
+        run: |
+          $pfxPath = Join-Path $env:TEMP 'codesign.pfx'
+          [System.IO.File]::WriteAllBytes($pfxPath, [System.Convert]::FromBase64String("${{ secrets.SIGNING_PFX_BASE64 }}"))
+          echo "Wrote PFX to $pfxPath"
+          echo "CSC_LINK=$pfxPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "CSC_KEY_PASSWORD=${{ secrets.SIGNING_PASSWORD }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Build (tsc + vite)
+        run: |
+          npm run make-icon || echo "make-icon skipped (ensure sharp/png-to-ico are installed)"
+          npm run build
+
+      - name: Package (electron-builder)
+        env:
+          # electron-builder picks up CSC_LINK and CSC_KEY_PASSWORD from env when present
+          CSC_LINK: ${{ env.CSC_LINK || '' }}
+          CSC_KEY_PASSWORD: ${{ env.CSC_KEY_PASSWORD || '' }}
+        run: npm run package
+
+      - name: Compute checksums
+        shell: pwsh
+        run: |
+          $out = "checksums.txt"
+          if (Test-Path $out) { Remove-Item $out }
+          Get-ChildItem -Path dist -Recurse -Include *.exe,*.apk -ErrorAction SilentlyContinue | ForEach-Object {
+            $h = Get-FileHash -Algorithm SHA256 $_.FullName
+            "$($h.Hash)  $($_.FullName)" | Out-File -FilePath $out -Append -Encoding utf8
+          }
+          if (Test-Path $out) { Get-Content $out }
+
+      - name: Create GitHub Release and upload assets
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          assets: |
+            dist/*.exe
+            dist/*.apk
+            checksums.txt
+          draft: false

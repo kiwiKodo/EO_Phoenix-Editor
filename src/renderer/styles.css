@@ -1,0 +1,399 @@
+/* Prefer Aptos if available on the system; fall back to common UI fonts */
+@font-face {
+	/* Use local() so system-installed Aptos is used when available. This does not bundle the font. */
+	font-family: 'AptosLocal';
+	/* prefer system Aptos when present, otherwise fall back to bundled font file */
+	/* prefer modern compressed format first, fall back to TTF */
+	src: local('Aptos'), url('./assets/fonts/Aptos.woff2') format('woff2'), url('./assets/fonts/Aptos.ttf') format('truetype');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+.body { font-family: AptosLocal, Aptos, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; margin: 0; background:#1e1e1e; color:#ddd }
+:root { --topbar-height:100px; --sidebar-width:300px; --helper-width:320px; --sidebar-gap:12px; --content-offset: -58px }
+
+.topbar { display:flex; align-items:center; justify-content:space-between; padding:0 20px; background:#1e1e1e; color:#ddd; border-bottom:1px solid #2a2a2a; position:fixed; z-index:1000; top:0; left:0; right:0; height:var(--topbar-height) }
+/* Ensure body selector is applied in case .body class isn't present on the document body (fix white-screen) */
+/* Ensure body selector is applied in case .body class isn't present on the document body (fix white-screen) */
+body { font-family: AptosLocal, Aptos, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; margin: 0; background:#1e1e1e; color:#ddd }
+.topbar nav button { margin-left:8px; background:transparent; color:inherit; border:1px solid transparent; padding:6px 8px; border-radius:4px }
+.topbar nav button:hover { background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.04) }
+/* push page content below the fixed topbar so sidebars align consistently */
+.app { display:flex; flex-direction:column; min-height:100vh; }
+.app main { padding: 12px; flex:1; display:flex; padding-top: var(--topbar-height) }
+/* Ensure the root elements fill the viewport so the sidebar can extend to the bottom */
+html, body, #root { height:100%; }
+.editor { display:flex; flex:1 }
+/* Left sidebar: fix under the topbar and fill remaining viewport height with a small gap */
+.sidebar { width:var(--sidebar-width); padding:12px; background:#252526; color:#ddd; box-sizing:border-box; display:flex; flex-direction:column; overflow-y:auto; position:fixed; top:calc(var(--topbar-height) + var(--sidebar-gap)); left:var(--sidebar-gap); height:calc(100vh - var(--topbar-height) - (var(--sidebar-gap) * 2)); z-index:10; border-radius:6px }
+.canvasWrap { flex:1; display:flex; align-items:center; justify-content:center; padding:12px }
+canvas { background: #000; box-shadow: 0 2px 8px rgba(0,0,0,0.5) }
+
+.controls { display:flex; flex-direction:column; gap:8px; flex:1; min-height:0 }
+.controlBlock { margin-top:10px; border-top: 1px solid #333; padding-top: 30px }
+.bordersList { display:flex; gap:8px; flex-wrap:wrap }
+.bordersList img { width:64px; height:100px; object-fit:cover }
+.borderSelected { outline: 3px solid #1976d2 }
+.sidebar input, .sidebar textarea, .sidebar select { width:100%; box-sizing:border-box; background:#1e1e1e; color:#ddd; border:1px solid #3c3c3c; padding:6px 8px }
+
+/* Focus state: narrow blue border matching primary (.primary) button */
+.sidebar input:focus, .sidebar textarea:focus, .sidebar select:focus {
+	outline: none; /* remove default focus ring */
+	border-width: 1px; /* ensure narrow border */
+	border-style: solid;
+	border-color: #007acc; /* same blue as Save media (.primary) */
+	box-shadow: none; /* avoid thick glow */
+}
+
+/* Button styles for sidebar and controls: reduce high-contrast white buttons */
+.sidebar button,
+.controls button,
+.frameBtn,
+.slotButtons button,
+.scaleControls button {
+	background: #2f2f2f;
+	color: #e6e6e6;
+	border: 1px solid #3c3c3c;
+	padding: 6px 10px; /* slightly reduced height */
+	border-radius: 6px;
+	cursor: pointer;
+}
+.sidebar button:hover,
+.controls button:hover,
+.frameBtn:hover,
+.slotButtons button:hover,
+.scaleControls button:hover {
+	background: #3a3a3a;
+}
+
+.panel { padding:12px; background:#2d2d2d; border:1px solid #3c3c3c; color:#ddd }
+
+.primary { background:#007acc; color:white; border:none; padding:8px 12px; cursor:pointer; border-radius:6px; min-height:32px }
+.sidebar button.primary, .controls button.primary { background:#007acc; color:white; border:none }
+.sidebar button.primary:hover, .controls button.primary:hover { background:#006bb3 }
+.primary:disabled { opacity:0.5; cursor:default }
+
+/* Ensure slot controls stack with spacing so Pick Image isn't sitting on top of scale buttons */
+.slotControls { display:flex; flex-direction:column; gap:8px }
+
+/* Divider above each image slot and above logs */
+.imageSlotBlock { border-top: 1px solid #333; padding-top: 12px; margin-top: 12px; padding-bottom: 12px }
+.imageSlotBlock > h4 { margin-top: 12px; margin-bottom: 12px }
+
+.sectionHeader { display:block; margin-bottom:6px; font-weight:600 }
+
+/* Logs section should stick to the bottom of the sidebar when content grows */
+.logsSection { margin-top: auto; border-top: 1px solid #333; padding-top: 8px }
+
+/* Make Save media button fill full width like Pick Image */
+.controlBlock .primary { width: 100%; display: block }
+
+/* Action buttons row (Update / Delete) */
+.actions { display:flex; gap:8px; justify-content:center; margin-top:6px }
+.actions button { min-width:120px }
+
+/* MediaEditor helpers */
+.zoomValue { min-width:60px; display:inline-block; text-align:center }
+.framesRow { display:flex; gap:8px; align-items:center; margin-bottom:8px; justify-content:center }
+.frameBtn { padding:4px; background:transparent; border:1px solid transparent }
+.frameBtn.frameSelected { background:#007acc; color:white; border-color:#006bb3 }
+.frameBtn.frameSelected:hover { background:#006bb3 }
+.frameImg { width:64px; height:64px; object-fit:cover }
+.logsBox { max-height:200px; overflow:auto; overflow-x:hidden; background:#1e1e1e; color:#ddd; padding:6px 8px; font-size:12px; border:1px solid #3c3c3c; box-sizing:border-box; white-space:pre-wrap; word-break:break-word }
+.logsSection .logActions { display:flex; gap:8px; margin-top:8px }
+.logsSection .logActions button { padding:6px 10px }
+.logsItem { margin-bottom:6px; white-space:pre-wrap }
+.logsEmpty { opacity:0.6 }
+.canvasContainer { display:flex; justify-content:center; align-items:center; width:100%; height:100% }
+.scaledWrap { transform-origin: top left }
+.canvasDisplay { background: #000; box-shadow: 0 2px 8px rgba(0,0,0,0.5) }
+.canvasDisplay.landscape { width: 1600px; height: 900px }
+.canvasDisplay.portrait { width: 900px; height: 1600px }
+.scaleControls { display:flex; gap:6px; align-items:center; width:100% }
+.scaleControls button { flex:1; text-align:center }
+
+/* Zoom controls: add a little left padding to +/- buttons to visually separate from label */
+.zoomControls { display:flex; align-items:center; gap:8px }
+.zoomControls .zoomBtns { display:flex; gap:6px }
+.zoomControls .zoomBtns button { padding-left:12px; padding-right:12px }
+
+/* Orientation toggle (replaces radios): */
+.orientationRow { display:flex; align-items:center; justify-content:center; gap:12px }
+.orientationRow > label { flex:0 0 auto; }
+.orientationToggle { display:flex; gap:6px; align-items:center; justify-content:center; flex:0 0 auto }
+.orientationToggle .toggleBtn { background:#2f2f2f; color:#e6e6e6; border:1px solid #3c3c3c; padding:4px 8px; border-radius:6px; cursor:pointer; min-height:28px }
+.orientationToggle .toggleBtn.active { background:#007acc; color:white; border-color:#006bb3 }
+.zoomBtns { display:flex; gap:6px; align-items:center; flex:0 0 auto }
+.zoomBtns button { padding:4px 8px; min-height:28px }
+
+/* Add a little extra space above the Orientation header specifically (first control block) */
+.controls > div:first-child .sectionHeader { margin-top: 12px }
+
+/* Top navigation buttons (Media / Settings) - match left menu appearance */
+.topbar nav { display:flex; gap:8px; align-items:center }
+.topbar nav .topNavBtn { background: #2f2f2f; color: #e6e6e6; border: 1px solid #3c3c3c; padding: 6px 10px; border-radius:6px; cursor:pointer }
+.topbar nav .topNavBtn:hover { background:#3a3a3a }
+.topbar nav .topNavBtn.active { background:#007acc; color:white; border-color:#006bb3 }
+
+.canvasAndTrash { display:flex; flex:1 }
+
+/* Ensure main canvas content is offset from the fixed left and right sidebars
+	 so the display area never slides underneath them on narrow viewports. */
+.editor .canvasAndTrash {
+	margin-left: calc(var(--sidebar-width) + (var(--sidebar-gap) * 2));
+	margin-right: calc(var(--helper-width) + (var(--sidebar-gap) * 2));
+	box-sizing: border-box;
+	min-height: calc(100vh - var(--topbar-height) - (var(--sidebar-gap) * 2));
+}
+
+/* Trash bin on the right side for removing loaded media via drag/drop */
+.trashBin { width:180px; box-sizing:border-box; border-left:1px solid #333; padding:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#aaa; background:#1f1f1f }
+.trashBin.dragOver { background:#3a2b2b; border-left-color:#ff6b6b }
+.trashIcon { font-size:36px; margin-bottom:8px }
+.trashHint { font-size:12px; opacity:0.7; margin-top:8px }
+.slotSelector { margin-top:8px }
+.slotSelectorLabel { font-size:12px; margin-bottom:6px }
+.slotButtons { display:flex; gap:6px }
+.slotDelete { margin-top:8px }
+.slotDelete button { background:#c0392b; color:white; border:none; padding:6px 10px; border-radius:4px }
+
+.slotTextInputs { margin-top:8px }
+.slotTextInputs label { display:block; font-size:12px; margin-bottom:4px }
+.slotTextInputs textarea { width:100%; padding:6px 8px; box-sizing:border-box; margin-bottom:8px; resize:vertical; min-height:40px }
+
+/* In-app modal (confirm delete) */
+.modalBackdrop { position:fixed; left:0; top:0; right:0; bottom:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:9999 }
+.modalBox { background:#2b2b2b; color:#ddd; border:1px solid #3c3c3c; padding:18px; width:420px; max-width:90%; border-radius:8px; box-shadow:0 6px 24px rgba(0,0,0,0.6) }
+.modalBox h3 { margin:0 0 8px 0 }
+.modalBox p { margin:0 0 12px 0; color:#ccc }
+.modalActions { display:flex; gap:8px; justify-content:flex-end }
+.modalActions button { padding:8px 12px; border-radius:6px; border:1px solid transparent; cursor:pointer; background:#3a3a3a; color:#eee }
+.modalActions button:hover { background:#4a4a4a }
+.modalActions .danger { background:#c0392b; color:white; border-color:#8b2a22 }
+.modalActions .danger:hover { background:#a02b24 }
+
+/* Global danger button to be reused across UIs.
+	 Use selectors that override the generic `.sidebar button` rules so
+	 buttons like the Reset button (which live in the sidebar) display red. */
+.sidebar button.danger,
+.controls button.danger,
+.danger {
+	background: #c0392b;
+	color: white;
+	border: 1px solid #8b2a22;
+	padding: 6px 10px;
+	border-radius: 6px;
+	cursor: pointer;
+}
+.sidebar button.danger:hover,
+.controls button.danger:hover,
+.danger:hover {
+	background: #a02b24;
+}
+
+/* Smaller inline reset button shown under nav items */
+.smallReset {
+	padding: 4px 8px;
+	font-size: 12px;
+	margin-top: 6px;
+	align-self: center;
+}
+
+/* Sidebar nav and action area styling */
+.sidebarNav {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding-top: 18px; /* extra space above the first nav item (above Slideshow) */
+}
+.sidebarNav .navItem {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.sidebarNav .navItem > button.menuBtn {
+	width: 100%;
+	text-align: center;
+}
+/* ensure any other buttons inside navItem (smallReset) size to content */
+.sidebarNav .navItem > button:not(.menuBtn) {
+	width: auto;
+	display: inline-block;
+}
+/* selected menu button blue */
+.sidebarNav button[aria-pressed="true"] {
+	background: #007acc;
+	color: #fff;
+	border-color: #006bb3;
+}
+
+.sidebarActions {
+	margin-top: 32px;
+	padding-top: 32px;
+	padding-bottom: 18px;
+	border-top: 1px solid #333; /* match MediaEditor page divider */
+	display: flex;
+	gap: 8px;
+	flex-direction: column; /* stack buttons vertically */
+	justify-content: flex-start;
+	align-items: center; /* center buttons and keep them auto-width */
+}
+.sidebarActions button {
+	width: auto;
+	display: inline-block;
+	min-width: 140px;
+}
+.sidebarActions button.primary {
+	/* ensure Save uses primary blue variant */
+	background: #006bb3;
+	color: #fff;
+	border-color: #005a9e;
+}
+
+/* Divider under actions and SD card guide */
+.sdCardDivider {
+	margin-top: 18px;
+	margin-bottom: 24px;
+	height: 1px;
+	background: #333; /* match MediaEditor divider */
+}
+
+.sdCardGuide {
+	padding: 8px 6px 12px 6px;
+	color: #ddd;
+	font-size: 13px;
+}
+.sdCardGuide .sdTitle { font-weight:600; margin-bottom:6px }
+.sdCardGuide .sdTree { font-family: monospace; background:#232323; padding:8px; border:1px solid #2d2d2d; border-radius:6px }
+.sdCardGuide .sdNode { margin-left:0 }
+.sdCardGuide .sdChild { margin-left: 14px; color:#cfcfcf }
+
+.helperSidebar {
+	width: var(--helper-width);
+	padding: 16px;
+	background: #252526;
+	color: #ddd;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	position: fixed;
+	right: var(--sidebar-gap);
+	top: calc(var(--topbar-height) + var(--sidebar-gap));
+	height: calc(100vh - var(--topbar-height) - (var(--sidebar-gap) * 2));
+	z-index: 10; /* below topbar but above content */
+	border-radius:6px
+}
+	.sidebar .sdCardFooter { margin-top: auto; display:flex; flex-direction:column }
+.helperSidebar .panel { background: transparent; border: none; padding: 0 }
+
+/* Layout helpers for settings page */
+.settingsLayout { display:flex; height:calc(100vh - var(--topbar-height) - (var(--sidebar-gap) * 2)); width:100% }
+.settingsMain { flex:1; padding:16px; margin-right: calc(var(--helper-width) + (var(--sidebar-gap) * 2)); margin-left: calc(var(--sidebar-width) + (var(--sidebar-gap) * 2)); box-sizing: border-box; margin-top: var(--content-offset) }
+
+/* Standardize spacing and typography for settings pages */
+.settingsMain { font-size:15px; line-height:1.35 }
+.settingsMain section { margin-bottom: 18px }
+.settingsMain h2 { margin-top: 0; margin-bottom: 12px; font-size:20px }
+.settingsMain label { display:block; margin-bottom:6px; font-size:15px }
+/* Centralized top margin for all setting names to ensure consistent vertical rhythm */
+.settingsMain label { margin-top: 18px !important; }
+.settingsMain .settingRow { margin-bottom:12px; padding-bottom:4px }
+
+/* Slideshow specific enhancements */
+.slideshowDivider { height:1px; background:#333; margin:32px 0 32px 0; /* extend visually across main + helper */
+	margin-right: calc(-1 * (var(--helper-width) + (var(--sidebar-gap) * 2)));
+}
+.advancedGroup.disabled { opacity:0.6; pointer-events:none; }
+.advancedToggle { margin-bottom:10px }
+.advancedToggle label { display:flex; gap:8px; align-items:center; color:#bbb }
+
+/* inputs on Settings pages should match caption preview colors */
+.settingsMain input, .settingsMain select, .settingsMain textarea {
+	background: #1e1e1e;
+	color: #ddd;
+	border: 1px solid #3c3c3c;
+	padding: 6px 8px;
+	border-radius: 6px;
+}
+.settingsMain input::placeholder, .settingsMain textarea::placeholder { color: #777 }
+
+/* Focus state for settings inputs: match Media Editor caption input (narrow blue border) */
+.settingsMain input:focus, .settingsMain textarea:focus, .settingsMain select:focus {
+	outline: none; /* remove default focus ring */
+	border-width: 1px; /* ensure narrow border */
+	border-style: solid;
+	border-color: #007acc; /* same blue as primary */
+	box-shadow: none; /* avoid thick glow */
+}
+
+/* Toast / notification styling — positioned centered in the topbar next to the title */
+.toastContainer {
+	position: fixed;
+	top: calc(var(--topbar-height) / 2);
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: flex;
+	flex-direction: row; /* show toasts inline centered in the topbar */
+	gap: 8px;
+	z-index: 11000;
+	align-items: center;
+	pointer-events: none; /* allow clicks through except on the toast itself */
+}
+.toast {
+	background:#2b2b2b;
+	color:#ddd;
+	border:1px solid #006bb3;
+	padding:12px 14px;
+	border-radius:8px;
+	box-shadow:0 6px 18px rgba(0,0,0,0.45);
+	min-width:200px;
+	pointer-events: auto; /* allow interactions inside the toast if needed */
+}
+.toast.success { border-color:#006bb3 }
+.toast.error { border-color:#c0392b }
+
+/* Helper text used below inputs in Settings pages */
+.settingsMain .fieldHelper {
+	font-size: 14px;
+	color: #666;
+	margin-top: 6px; /* consistent spacing to content above */
+	margin-bottom: 6px;
+}
+.settingsMain small.smallNote { color: #666; font-size: 14px }
+
+/* Ensure select boxes have no top margin so they align consistently under labels */
+select { margin-top: 0; }
+.sidebar select, .settingsMain select { margin-top: 0; }
+
+/* Schedule page: single column list and day box styling that matches divider color */
+.scheduleList { display: grid; grid-template-columns: 1fr; gap: 18px }
+.scheduleDay { border: 1px solid #333; padding: 18px; background: #2d2d2d; border-radius:6px }
+.scheduleDayTitle { text-transform: capitalize; margin: 0 0 6px 0; font-size: 15px }
+.scheduleDayBody { margin-bottom: 0px }
+.smallLabel { font-size: 12px }
+.slotRow { display:flex; gap:18px; align-items:center; padding:0px 10px; margin-top: -10px }
+.timeLabel { font-size:12px }
+
+/* When Always on is enabled, grey out schedule controls to indicate they're inactive */
+.scheduleList.disabled { opacity: 0.6 }
+.scheduleList.disabled .scheduleDay { opacity: 0.9 }
+.scheduleList.disabled .addRow { opacity: 0.6 }
+
+/* Ensure schedule Add/Remove buttons follow global styles (primary/danger) */
+.scheduleDay .primary { min-width: auto; padding:6px 10px }
+.scheduleDay .danger { min-width: auto; padding:6px 10px }
+
+/* Slightly lower the Remove button so it visually aligns with the On/Off selects */
+.scheduleDay .slotRow > button.danger { margin-top: 10px }
+
+/* Wrapper for the Add row to ensure the Add button sits after slot rows
+	and is not overlapped by dense slot content. Give it a little top margin
+	and ensure it appears above adjacent content if needed. */
+.addRow { margin-top: 8px; display:flex; justify-content:flex-start; z-index:2 }
+.addRow button.primary { margin-left: 0 }
+
+/* If the advanced spacing reductions still cause overlap in very small viewports,
+	ensure the add row clears floats and sits on its own line. */
+.addRow::before { content: ""; display:block; height:0; clear:both }
