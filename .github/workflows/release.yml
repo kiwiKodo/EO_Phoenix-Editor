@@ -8,6 +8,8 @@ on:
 jobs:
   build-and-release:
     runs-on: windows-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -45,8 +47,5 @@ jobs:
         with:
           tag: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
-          assets: |
-            dist/*.exe
-            dist/*.apk
-            checksums.txt
+          artifacts: "dist/*.exe,checksums.txt"
           draft: false
