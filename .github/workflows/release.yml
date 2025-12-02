@@ -20,7 +20,7 @@ jobs:
         run: npm ci
 
       - name: Optional: install signing certificate (PFX)
-        if: ${{ secrets.SIGNING_PFX_BASE64 != '' }}
+        if: secrets.SIGNING_PFX_BASE64 != ''
         shell: pwsh
         run: |
           $pfxPath = Join-Path $env:TEMP 'codesign.pfx'
