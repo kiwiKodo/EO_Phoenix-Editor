@@ -32,13 +32,12 @@ Download the latest installer from [Releases](https://github.com/kiwiKodo/EO_Pho
 - Note: The EO2 frame only supports 2.4 GHz networks
 
 #### Slideshow Settings
-- **Display Duration**: Set how long each photo displays (5-60 seconds)
+- **Display Duration**: Set how long each photo displays (minimum 1 minute, no upper limit)
 - **Transition Style**: Choose fade, slide, or zoom transitions
 - **Video Settings**: Configure video playback options
 
 #### Schedule
 - Set daily on/off times for the display
-- Configure brightness levels for different times
 - Save energy by turning off during specific hours
 
 #### Brightness Control
@@ -47,7 +46,6 @@ Download the latest installer from [Releases](https://github.com/kiwiKodo/EO_Pho
 
 #### Captions
 - Enable photo date/time captions
-- Choose font, size, and position
 - Customize caption appearance
 
 ### 2. Prepare Media
@@ -60,9 +58,10 @@ Download the latest installer from [Releases](https://github.com/kiwiKodo/EO_Pho
 5. Save edited photos
 
 #### Organize Media
-- Place photos and videos in a `Media Folder` directory
+#### Organize Media
+- Place photos and videos in a media folder
+- Assign the media folder to play in the slideshow
 - Supported formats:
-  - Images: JPG, PNG
   - Videos: MP4, AVI, MKV
 
 ### 3. Generate Settings File
@@ -79,7 +78,7 @@ Download the latest installer from [Releases](https://github.com/kiwiKodo/EO_Pho
 3. Select the SD card drive
 4. The app copies:
    - `eo-settings.json`
-   - `Media Folder/` (containing all photos and videos)
+   - Your designated media folders (containing all photos and videos)
    - To `/SD card/EoPhoenix/`
 
 **Option B: Sideload via Bluetooth**
@@ -103,11 +102,13 @@ After export, your SD card should have this structure:
 SD card/
 └── EoPhoenix/
     ├── eo-settings.json
-    └── Media Folder/
-        ├── photo1.jpg
-        ├── photo2.png
-        ├── video1.mp4
-        └── ...
+    ├── Summer Vacation/         # Media folder example
+    │   ├── photo1.jpg
+    │   ├── photo2.png
+    │   └── video1.mp4
+    └── Family Photos/           # Another media folder example
+        ├── photo3.jpg
+        └── photo4.png
 ```
 
 ## Development
