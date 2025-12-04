@@ -60,8 +60,7 @@ Download the latest installer from [Releases](https://github.com/kiwiKodo/EO_Pho
 5. Save edited photos
 
 #### Organize Media
-- Place photos in a `photos` folder
-- Place videos in a `videos` folder
+- Place photos and videos in a `Media Folder` directory
 - Supported formats:
   - Images: JPG, PNG
   - Videos: MP4, AVI, MKV
@@ -80,8 +79,7 @@ Download the latest installer from [Releases](https://github.com/kiwiKodo/EO_Pho
 3. Select the SD card drive
 4. The app copies:
    - `eo-settings.json`
-   - `photos/` folder
-   - `videos/` folder
+   - `Media Folder/` (containing all photos and videos)
    - To `/SD card/EoPhoenix/`
 
 **Option B: Sideload via Bluetooth**
@@ -105,11 +103,9 @@ After export, your SD card should have this structure:
 SD card/
 └── EoPhoenix/
     ├── eo-settings.json
-    ├── photos/
-    │   ├── photo1.jpg
-    │   ├── photo2.png
-    │   └── ...
-    └── videos/
+    └── Media Folder/
+        ├── photo1.jpg
+        ├── photo2.png
         ├── video1.mp4
         └── ...
 ```
@@ -183,7 +179,7 @@ src/
 - Review logs on the frame at `/SD card/EoPhoenix/eo-logs.txt`
 
 ### Media files not displaying
-- Confirm files are in `/SD card/EoPhoenix/photos/` or `/videos/`
+- Confirm files are in `/SD card/EoPhoenix/Media Folder/`
 - Check that files are in supported formats (JPG, PNG, MP4)
 - Ensure SD card is properly inserted in the frame
 
