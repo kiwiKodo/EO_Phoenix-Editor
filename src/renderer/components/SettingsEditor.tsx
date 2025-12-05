@@ -92,16 +92,15 @@ export default function SettingsEditor(){
       const raw = localStorage.getItem('eo-settings')
       if (raw) {
         const parsed = JSON.parse(raw)
-        // parsed may be the combined settings object; extract wifi keys
-        // Merge parsed values over defaults, but DO NOT persist SSID/password
-        const merged = { ...defaultSettings, ...(parsed || {}) }
-        if (parsed.wifi) {
+        // Prefer nested wifi object if present
+        if (parsed.wifi && typeof parsed.wifi === 'object') {
           const fromWifi = { ...defaultSettings, ...parsed.wifi }
           fromWifi.wifiSSID = ''
           fromWifi.wifiPassword = ''
           return fromWifi
         }
-        // If parsed had top-level wifi keys, ensure SSID/password are blank
+        // Fallback to flat structure (legacy)
+        const merged = { ...defaultSettings, ...(parsed || {}) }
         merged.wifiSSID = ''
         merged.wifiPassword = ''
         return merged
@@ -212,8 +211,11 @@ export default function SettingsEditor(){
       const raw = localStorage.getItem('eo-settings')
       if (raw) {
         const parsed = JSON.parse(raw)
-        if (parsed.slideshow) return { ...defaultSlideshow, ...(parsed.slideshow || {}) }
-        // if top-level keys exist, merge them
+        // Prefer nested slideshow object
+        if (parsed.slideshow && typeof parsed.slideshow === 'object') {
+          return { ...defaultSlideshow, ...parsed.slideshow }
+        }
+        // Fallback to flat structure (legacy)
         const ss: any = { ...defaultSlideshow }
         let found = false
         for (const k of Object.keys(defaultSlideshow) as Array<keyof SlideshowSettings>) {
@@ -280,7 +282,11 @@ export default function SettingsEditor(){
       const raw = localStorage.getItem('eo-settings')
       if (raw) {
         const parsed = JSON.parse(raw)
-        if (parsed.logging) return { ...defaultLogging, ...(parsed.logging || {}) }
+        // Prefer nested logging object
+        if (parsed.logging && typeof parsed.logging === 'object') {
+          return { ...defaultLogging, ...parsed.logging }
+        }
+        // Fallback to flat structure (legacy)
         const lg: any = { ...defaultLogging }
         let found = false
         for (const k of Object.keys(defaultLogging) as Array<keyof LoggingSettings>) {
@@ -314,7 +320,11 @@ export default function SettingsEditor(){
       const raw = localStorage.getItem('eo-settings')
       if (raw) {
         const parsed = JSON.parse(raw)
-        if (parsed.system) return { ...defaultSystem, ...(parsed.system || {}) }
+        // Prefer nested system object
+        if (parsed.system && typeof parsed.system === 'object') {
+          return { ...defaultSystem, ...parsed.system }
+        }
+        // Fallback to flat structure (legacy)
         const ss: any = { ...defaultSystem }
         let found = false
         for (const k of Object.keys(defaultSystem) as Array<keyof SystemSettings>) {
@@ -336,9 +346,14 @@ export default function SettingsEditor(){
       const raw = localStorage.getItem('eo-settings')
       if (raw) {
         const parsed = JSON.parse(raw)
-        if (parsed.captions) return { ...defaultCaptionSettings, ...(parsed.captions || {}) }
-        // fallback to media.captionSettings if present
-        if (parsed.media && parsed.media.captionSettings) return { ...defaultCaptionSettings, ...(parsed.media.captionSettings || {}) }
+        // Prefer top-level captions
+        if (parsed.captions && typeof parsed.captions === 'object') {
+          return { ...defaultCaptionSettings, ...parsed.captions }
+        }
+        // Fallback to media.captionSettings (legacy)
+        if (parsed.media && parsed.media.captionSettings) {
+          return { ...defaultCaptionSettings, ...parsed.media.captionSettings }
+        }
       }
     } catch (e) { /* ignore */ }
     return defaultCaptionSettings
@@ -431,25 +446,36 @@ export default function SettingsEditor(){
       return
     }
     
-  const parsed = r.parsed
-    // merge wifi keys
+    const parsed = r.parsed
+    
+    // Load wifi settings (support both nested and flat structure for backwards compatibility)
     const newWifi = { ...wifi }
-    for (const k of Object.keys(defaultSettings) as Array<keyof WifiSettings>) {
-      if (k in parsed) (newWifi as any)[k] = (parsed as any)[k]
+    if (parsed.wifi && typeof parsed.wifi === 'object') {
+      // Nested structure (preferred)
+      Object.assign(newWifi, parsed.wifi)
+    } else {
+      // Flat structure (legacy)
+      for (const k of Object.keys(defaultSettings) as Array<keyof WifiSettings>) {
+        if (k in parsed) (newWifi as any)[k] = (parsed as any)[k]
+      }
     }
     setWifi(newWifi)
-    // merge slideshow keys
-    if (parsed.slideshow) setSlideshow({ ...defaultSlideshow, ...(parsed.slideshow || {}) })
-    else {
+    
+    // Load slideshow settings (support both nested and flat)
+    if (parsed.slideshow && typeof parsed.slideshow === 'object') {
+      setSlideshow({ ...defaultSlideshow, ...parsed.slideshow })
+    } else {
       const newSs: any = { ...defaultSlideshow }
       for (const k of Object.keys(defaultSlideshow) as Array<keyof SlideshowSettings>) {
         if (k in parsed) newSs[k] = (parsed as any)[k]
       }
       setSlideshow(newSs)
     }
-    // merge logging keys
-    if (parsed.logging) setLogging({ ...defaultLogging, ...(parsed.logging || {}) })
-    else {
+    
+    // Load logging settings (support both nested and flat)
+    if (parsed.logging && typeof parsed.logging === 'object') {
+      setLogging({ ...defaultLogging, ...parsed.logging })
+    } else {
       const newLg: any = { ...defaultLogging }
       for (const k of Object.keys(defaultLogging) as Array<keyof LoggingSettings>) {
         if (k in parsed) newLg[k] = (parsed as any)[k]
@@ -457,9 +483,10 @@ export default function SettingsEditor(){
       setLogging(newLg)
     }
 
-    // merge system keys
-    if (parsed.system) setSystem({ ...defaultSystem, ...(parsed.system || {}) })
-    else {
+    // Load system settings (support both nested and flat)
+    if (parsed.system && typeof parsed.system === 'object') {
+      setSystem({ ...defaultSystem, ...parsed.system })
+    } else {
       const newSys: any = { ...defaultSystem }
       for (const k of Object.keys(defaultSystem) as Array<keyof SystemSettings>) {
         if (k in parsed) newSys[k] = (parsed as any)[k]
@@ -467,10 +494,14 @@ export default function SettingsEditor(){
       setSystem(newSys)
     }
 
-    // captions
-    if (parsed.captions) setCaptions({ ...defaultCaptionSettings, ...(parsed.captions || {}) })
-    else if (parsed.media && parsed.media.captionSettings) setCaptions({ ...defaultCaptionSettings, ...(parsed.media.captionSettings || {}) })
+    // Load captions (nested or from media.captionSettings)
+    if (parsed.captions) {
+      setCaptions({ ...defaultCaptionSettings, ...parsed.captions })
+    } else if (parsed.media && parsed.media.captionSettings) {
+      setCaptions({ ...defaultCaptionSettings, ...parsed.media.captionSettings })
+    }
 
+    // Load schedule
     if (parsed.schedule) setSchedule(parsed.schedule)
   try { showNotification('Settings loaded from ' + r.path, 3000, 'success') } catch (e) { /* ignore */ }
 
@@ -582,11 +613,16 @@ export default function SettingsEditor(){
 
   const handleSave = async () => {
     const processedSchedule = processScheduleForSave(schedule)
-    const combined = { ...wifi, ...slideshow, ...logging, ...system, schedule: processedSchedule }
-  // include captions in exported settings
-  ;(combined as any).captions = captions
-  // include alwaysOn flag in combined export
-  ;(combined as any).alwaysOn = alwaysOn
+    // Build settings with nested structure only (no root-level duplication)
+    const combined = {
+      wifi: { ...wifi },
+      slideshow: { ...slideshow },
+      logging: { ...logging },
+      system: { ...system },
+      schedule: processedSchedule,
+      captions: { ...captions },
+      alwaysOn: alwaysOn
+    }
     // Suggest last-used save folder when opening Save dialog
     let lastSaveFolder: string | undefined
     try {
@@ -596,16 +632,34 @@ export default function SettingsEditor(){
     } catch (e) { /* ignore */ }
 
     // Build export object: merge existing localStorage `eo-settings` (to preserve media fields)
-    // with the combined settings we're about to save. Then sanitize to avoid
-    // writing duplicated captionSettings or legacy `media.scale`.
-    let exportObj: any = combined
+    // with the combined settings we're about to save.
+    let exportObj: any = {}
     try {
       const raw = localStorage.getItem('eo-settings')
       const parsed = raw ? JSON.parse(raw) : {}
-      // start from parsed to preserve media.files/imageTextList/etc, then overwrite with combined
-      exportObj = { ...parsed, ...combined }
-      // Ensure captions present at top-level
-      exportObj.captions = captions
+      
+      // Start with media block from parsed (preserve editor-specific data)
+      if (parsed.media) {
+        exportObj.media = parsed.media
+        // Remove duplicated/legacy keys from media
+        if (exportObj.media.captionSettings) delete exportObj.media.captionSettings
+        if ('scale' in exportObj.media) delete exportObj.media.scale
+      }
+      
+      // Add all settings as nested objects (no root-level duplication)
+      exportObj.wifi = combined.wifi
+      exportObj.slideshow = combined.slideshow
+      exportObj.logging = combined.logging
+      exportObj.system = combined.system
+      exportObj.captions = combined.captions
+      exportObj.schedule = combined.schedule
+      exportObj.alwaysOn = combined.alwaysOn
+      
+      // Preserve editor-specific fields if present
+      if (parsed.lastSettingsPage) exportObj.lastSettingsPage = parsed.lastSettingsPage
+      if (parsed.settingsSaveFolder) exportObj.settingsSaveFolder = parsed.settingsSaveFolder
+      if (parsed.settingsLoadFolder) exportObj.settingsLoadFolder = parsed.settingsLoadFolder
+      
       // If alwaysOn is enabled, or the processed schedule is empty for all days,
       // provide the always-on schedule so the Android app will keep the display on.
       const allEmpty = Object.values(processedSchedule).every(arr => !arr || arr.length === 0)
@@ -620,22 +674,17 @@ export default function SettingsEditor(){
           sunday: [{ on: '00:00', off: '24:00' }]
         }
       }
-      // Preserve media block but remove duplicated/legacy keys
-      exportObj.media = parsed.media || exportObj.media || {}
-      if (exportObj.media && exportObj.media.captionSettings) delete exportObj.media.captionSettings
-      if (exportObj.media && 'scale' in exportObj.media) delete exportObj.media.scale
     } catch (e) {
       // fallback to combined if parse fails
       exportObj = combined
-      exportObj.captions = captions
     }
 
     // Before saving, validate required fields. If any are missing, ask the user to confirm.
     const missing: string[] = []
-    if (!wifi.wifiSSID || wifi.wifiSSID.trim() === '') missing.push('SSID')
-    if (!wifi.wifiPassword || wifi.wifiPassword.trim() === '') missing.push('Password')
-    if (!wifi.timeZone || wifi.timeZone.trim() === '') missing.push('Time zone')
-    if (!slideshow.folder || slideshow.folder.trim() === '') missing.push('Folder name')
+    if (!combined.wifi.wifiSSID || combined.wifi.wifiSSID.trim() === '') missing.push('SSID')
+    if (!combined.wifi.wifiPassword || combined.wifi.wifiPassword.trim() === '') missing.push('Password')
+    if (!combined.wifi.timeZone || combined.wifi.timeZone.trim() === '') missing.push('Time zone')
+    if (!combined.slideshow.folder || combined.slideshow.folder.trim() === '') missing.push('Folder name')
 
     const performSave = async (obj: any) => {
       const r = await window.eo.saveSettings(obj, { suggestedPath: lastSaveFolder })
@@ -1048,7 +1097,7 @@ export default function SettingsEditor(){
     setSchedule(prev => ({ ...prev, [day]: daySlots }))
   }
 
-  // Auto-save settings (wifi + processed schedule) to localStorage with debounce.
+  // Auto-save settings to localStorage with debounce (using nested structure).
   const saveTimeout = React.useRef<number | null>(null)
   React.useEffect(() => {
     // debounce 600ms
@@ -1057,21 +1106,23 @@ export default function SettingsEditor(){
       try {
         // Read existing settings and merge rather than replacing the whole object.
         // This preserves unrelated keys such as media.files/imageTextList which
-        // would otherwise be lost when auto-saving captions or wifi/system fields.
+        // would otherwise be lost when auto-saving.
         const rawExisting = localStorage.getItem('eo-settings')
         const parsedExisting = rawExisting ? JSON.parse(rawExisting) : {}
 
         const toSave: any = { ...parsedExisting }
 
-        // Merge top-level groups (wifi, slideshow, logging, system)
-        Object.assign(toSave, wifi)
-        toSave.slideshow = { ...(parsedExisting.slideshow || {}), ...(slideshow || {}) }
-        toSave.logging = { ...(parsedExisting.logging || {}), ...(logging || {}) }
-        toSave.system = { ...(parsedExisting.system || {}), ...(system || {}) }
-
-        // Never persist SSID/password in localStorage
-        toSave.wifiSSID = ''
-        toSave.wifiPassword = ''
+        // Store settings as nested objects (no root-level duplication)
+        const cleanWifi = { ...wifi }
+        cleanWifi.wifiSSID = ''
+        cleanWifi.wifiPassword = ''
+        
+        toSave.wifi = cleanWifi
+        toSave.slideshow = { ...slideshow }
+        toSave.logging = { ...logging }
+        toSave.system = { ...system }
+        toSave.captions = { ...captions }
+        toSave.alwaysOn = alwaysOn
 
         try {
           if (alwaysOn) {
@@ -1093,12 +1144,8 @@ export default function SettingsEditor(){
           toSave.schedule = schedule
         }
 
-  // include captions settings at top-level only to avoid duplication.
-  toSave.captions = captions
-  // persist alwaysOn flag so rest of app can observe it
-  toSave.alwaysOn = alwaysOn
-  // preserve existing media block (don't inject captionSettings here)
-  toSave.media = parsedExisting.media || (toSave.media || {})
+        // preserve existing media block (don't modify it here)
+        toSave.media = parsedExisting.media || toSave.media
 
         localStorage.setItem('eo-settings', JSON.stringify(toSave))
         // notify other components in this window that settings changed
