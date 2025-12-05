@@ -1,6 +1,6 @@
 {
   "name": "eo-phoenix-editor",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "main": "dist/main/main.js",
   "description": "Desktop editor for preparing EO Phoenix settings and media for the EO2 Photo Frame. Use this app to configure device settings, manage media folders, and produce settings files for the EO Phoenix Android app.",
