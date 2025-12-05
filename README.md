@@ -1,6 +1,6 @@
 # EO Phoenix Editor
 
-Desktop application for configuring and managing the EO2 Photo Frame. Create settings files, prepare media, and sideload the Android app via Bluetooth.
+Desktop application for configuring and managing the EO2 Photo Frame. Create settings files, prepare media, and sideload the [EO Phoenix Android app](https://github.com/kiwiKodo/EO_Phoenix) via Bluetooth.
 
 ## Features
 
@@ -33,8 +33,10 @@ Download the latest installer from [Releases](https://github.com/kiwiKodo/EO_Pho
 
 #### Slideshow Settings
 - **Display Duration**: Set how long each photo displays (minimum 1 minute, no upper limit)
-- **Transition Style**: Choose fade, slide, or zoom transitions
-- **Video Settings**: Configure video playback options
+- **Shuffle**: Randomize media playback order
+- **Loop Videos**: Repeat videos continuously during slideshow delay
+- **Allow Full Length Videos**: Play videos to completion regardless of slideshow delay
+- **Orientation**: Set portrait or landscape orientation
 
 #### Schedule
 - Set daily on/off times for the display
@@ -44,56 +46,45 @@ Download the latest installer from [Releases](https://github.com/kiwiKodo/EO_Pho
 - Set manual brightness level (0-100%)
 - Note: Auto-brightness is not currently available
 
+#### Frames
+- Choose from single, double, or triple mat frames, or no frame
+
 #### Captions
-- Enable photo date/time captions
+- Enable photo captions
 - Customize caption appearance
 
 ### 2. Prepare Media
 
 #### Media Editor
 1. Click the **Media** tab
-2. Select photos to add borders and captions
-3. Choose border style (single, double, triple)
-4. Add custom text overlays
-5. Save edited photos
+2. Set frame orientation (portrait or landscape)
+3. Select photos, add borders and captions
+4. Choose border style (single, double, triple, none)
+5. Add custom text overlays
+6. Save edited photos
 
-#### Organize Media
 #### Organize Media
 - Place photos and videos in a media folder
 - Assign the media folder to play in the slideshow
-- Supported formats:
+- Video must be manually added to the Media Folder. Supported formats:
   - Videos: MP4, AVI, MKV
 
 ### 3. Generate Settings File
 
 1. Complete all settings tabs
 2. Click **Save Settings** in the System tab
-3. The app creates `eo-settings.json` with your configuration
+3. The app creates `settings.json` with your configuration
 
-### 4. Export to SD Card
+### 4. Copy to SD Card
 
-**Option A: Direct Export**
-1. Insert SD card into your computer
-2. Click **Export** in the File menu
-3. Select the SD card drive
-4. The app copies:
-   - `eo-settings.json`
-   - Your designated media folders (containing all photos and videos)
-   - To `/SD card/EoPhoenix/`
-
-**Option B: Sideload via Bluetooth**
-1. Ensure Bluetooth is enabled on your computer
-2. Use the **Sideload App** feature in the EO2 Setup tab
-3. Follow on-screen instructions to pair with the frame
-4. Transfer the Android APK directly
+Save the `settings.json` file and media folders to the SD card in the `/SD card/EoPhoenix/` directory. Ensure the media folder names match the folder name specified in your slideshow settings.
 
 ### 5. Install on Frame
 
 1. Download the [EO Phoenix Android app](https://github.com/kiwiKodo/EO_Phoenix/releases/latest)
-2. Copy the APK to the SD card or sideload via Bluetooth
-3. Insert SD card into the EO2 Photo Frame
-4. Install the APK (if not already installed)
-5. The app will automatically load settings and start
+2. Install the APK on the EO2 Photo Frame
+3. Connect the SD card
+4. The app will automatically load settings and start
 
 ## SD Card Structure
 
@@ -101,7 +92,7 @@ After export, your SD card should have this structure:
 ```
 SD card/
 └── EoPhoenix/
-    ├── eo-settings.json
+    ├── settings.json
     ├── Summer Vacation/         # Media folder example
     │   ├── photo1.jpg
     │   ├── photo2.png
@@ -175,7 +166,7 @@ src/
 - Try restarting the Bluetooth service
 
 ### Settings not loading on frame
-- Verify `eo-settings.json` is in `/SD card/EoPhoenix/`
+- Verify `settings.json` is in `/SD card/EoPhoenix/`
 - Check that the file is valid JSON (no syntax errors)
 - Review logs on the frame at `/SD card/EoPhoenix/eo-logs.txt`
 
