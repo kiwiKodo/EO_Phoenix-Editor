@@ -1311,7 +1311,8 @@ export default function SettingsEditor(){
                 <li><strong>Factory reset:</strong> press and hold the recessed factory reset button on the back for approximately 5 seconds (the button is behind a small hole in the fourth row of holes from the top, left of centre). Keep holding until the display flashes white, then release. Use a toothpick or similar tool to reach it.</li>
               </ul>
               <h4>Factory Reset First</h4>
-              <p>Factory-reset the device before starting configuration to ensure the device is in a known state.</p>
+              <p>Factory-reset the device before starting configuration to ensure the device is in a known state. Press and hold the recessed factory reset button on the back for approximately 5 seconds (the button is behind a small hole in the fourth row of holes from the top, left of centre). Keep holding until the display flashes white, then release. Use a toothpick or similar tool to reach it.</p>
+              <p>Alternatively, run a factory data reset via the Android menu by going to Reset, then Factory data reset. NOTE: this will erase all data from the device's internal storage.</p>
             </div>
           </section>
         )}
