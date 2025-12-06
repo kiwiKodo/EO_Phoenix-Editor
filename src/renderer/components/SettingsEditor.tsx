@@ -641,7 +641,10 @@ export default function SettingsEditor(){
       // DO NOT export media block - it's Editor-specific (file paths, positions, scales)
       // The Android app doesn't need this data
       
-      // Add all settings as nested objects (no root-level duplication)
+      // Export settings in BOTH nested and flat format for maximum compatibility
+      // The Android app's Settings.java checks nested objects first, then falls back to flat fields
+      
+      // Add nested objects
       exportObj.wifi = combined.wifi
       exportObj.slideshow = combined.slideshow
       exportObj.logging = combined.logging
@@ -649,6 +652,14 @@ export default function SettingsEditor(){
       exportObj.captions = combined.captions
       exportObj.schedule = combined.schedule
       exportObj.alwaysOn = combined.alwaysOn
+      
+      // ALSO add flat fields at root level for full backwards compatibility
+      // This ensures older Android versions or parsing issues won't break
+      Object.assign(exportObj, combined.wifi)
+      Object.assign(exportObj, combined.slideshow)
+      Object.assign(exportObj, combined.logging)
+      Object.assign(exportObj, combined.system)
+      // Don't flatten captions (it has its own nested structure in Android)
       
       // DO NOT preserve editor-specific fields like lastSettingsPage, settingsSaveFolder, etc.
       // Keep settings.json clean for Android app consumption
