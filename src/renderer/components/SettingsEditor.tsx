@@ -641,25 +641,17 @@ export default function SettingsEditor(){
       // DO NOT export media block - it's Editor-specific (file paths, positions, scales)
       // The Android app doesn't need this data
       
-      // Export settings in BOTH nested and flat format for maximum compatibility
-      // The Android app's Settings.java checks nested objects first, then falls back to flat fields
+      // Export settings in FLAT format only (no nested objects)
+      // This is the working format that the Android app reads correctly
       
-      // Add nested objects
-      exportObj.wifi = combined.wifi
-      exportObj.slideshow = combined.slideshow
-      exportObj.logging = combined.logging
-      exportObj.system = combined.system
-      exportObj.captions = combined.captions
-      exportObj.schedule = combined.schedule
-      exportObj.alwaysOn = combined.alwaysOn
-      
-      // ALSO add flat fields at root level for full backwards compatibility
-      // This ensures older Android versions or parsing issues won't break
+      // Add all settings as flat fields at root level
       Object.assign(exportObj, combined.wifi)
       Object.assign(exportObj, combined.slideshow)
       Object.assign(exportObj, combined.logging)
       Object.assign(exportObj, combined.system)
-      // Don't flatten captions (it has its own nested structure in Android)
+      exportObj.schedule = combined.schedule
+      exportObj.alwaysOn = combined.alwaysOn
+      // Don't include captions in export - not used by Android app
       
       // DO NOT preserve editor-specific fields like lastSettingsPage, settingsSaveFolder, etc.
       // Keep settings.json clean for Android app consumption
@@ -1520,10 +1512,10 @@ export default function SettingsEditor(){
                 </div>
 
                 <label style={{marginTop:18}}>Slideshow delay (minutes)</label>
-                <input type="number" step="1" min={1} value={String(Math.round((slideshow.slideshowDelay||0)/60))} onChange={e => {
-                  // UI shows whole minutes; convert to seconds for storage
+                <input type="number" step="1" min={1} value={String(Math.round(slideshow.slideshowDelay||0))} onChange={e => {
+                  // Store as minutes (Android app will convert to milliseconds)
                   const mins = Math.max(1, Math.round(Number(e.target.value) || 0))
-                  setSlideField('slideshowDelay', mins * 60)
+                  setSlideField('slideshowDelay', mins)
                 }} />
                 <div className="fieldHelper">{slideshowHelperText.slideshowDelay}</div>
 
