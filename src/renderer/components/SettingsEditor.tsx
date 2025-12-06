@@ -638,13 +638,8 @@ export default function SettingsEditor(){
       const raw = localStorage.getItem('eo-settings')
       const parsed = raw ? JSON.parse(raw) : {}
       
-      // Start with media block from parsed (preserve editor-specific data)
-      if (parsed.media) {
-        exportObj.media = parsed.media
-        // Remove duplicated/legacy keys from media
-        if (exportObj.media.captionSettings) delete exportObj.media.captionSettings
-        if ('scale' in exportObj.media) delete exportObj.media.scale
-      }
+      // DO NOT export media block - it's Editor-specific (file paths, positions, scales)
+      // The Android app doesn't need this data
       
       // Add all settings as nested objects (no root-level duplication)
       exportObj.wifi = combined.wifi
@@ -655,10 +650,8 @@ export default function SettingsEditor(){
       exportObj.schedule = combined.schedule
       exportObj.alwaysOn = combined.alwaysOn
       
-      // Preserve editor-specific fields if present
-      if (parsed.lastSettingsPage) exportObj.lastSettingsPage = parsed.lastSettingsPage
-      if (parsed.settingsSaveFolder) exportObj.settingsSaveFolder = parsed.settingsSaveFolder
-      if (parsed.settingsLoadFolder) exportObj.settingsLoadFolder = parsed.settingsLoadFolder
+      // DO NOT preserve editor-specific fields like lastSettingsPage, settingsSaveFolder, etc.
+      // Keep settings.json clean for Android app consumption
       
       // If alwaysOn is enabled, or the processed schedule is empty for all days,
       // provide the always-on schedule so the Android app will keep the display on.
