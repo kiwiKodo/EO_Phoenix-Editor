@@ -109,7 +109,7 @@ export default function MediaEditor() {
     { id: 'triple', label: 'Triple', src: frameTriple },
   ]
   // selectedBorder stores the id ('single'|'double'|'triple') or null for none
-  const [selectedBorder, setSelectedBorder] = React.useState<string | null>(borders[0].id)
+  const [selectedBorder, setSelectedBorder] = React.useState<string | null>('single')
   const selectedBorderRef = React.useRef<string | null>(selectedBorder)
   const orientationRef = React.useRef<'portrait'|'landscape'>(orientation)
   // confirm modal state for delete action (slot index to delete)
@@ -128,15 +128,12 @@ export default function MediaEditor() {
       if (Array.isArray(media.imagePosList)) setImagePosList(media.imagePosList)
       if (Array.isArray(media.imageScaleUserList)) setImageScaleUserList(media.imageScaleUserList)
       if (media.orientation) setOrientation(media.orientation)
+      // Always default to 'single' frame on load for consistent proportions
       if (media.selectedBorder) {
         const sb = media.selectedBorder
-        // support old stored values (src path) or new ids
         const byId = borders.find(b => b.id === sb)
-        if (byId) setSelectedBorder(byId.id)
-        else {
-          const bySrc = borders.find(b => b.src === sb)
-          if (bySrc) setSelectedBorder(bySrc.id)
-        }
+        if (byId && byId.id === 'single') setSelectedBorder('single')
+        // Don't load double or triple frames - always start with single
       }
       if (typeof media.text === 'string') setText(media.text)
       if (Array.isArray(media.imageTextList)) setImageTextList(media.imageTextList)
