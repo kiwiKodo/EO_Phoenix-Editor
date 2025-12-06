@@ -1395,13 +1395,14 @@ export default function SettingsEditor(){
             <h2>Side load app</h2>
             <div>
               <p>The EO Phoenix app must be side loaded, rather than downloaded and installed from the app store.</p>
+              <p>Download the latest release of the <code>eo-phoenix.apk</code> from the <a href="https://github.com/kiwiKodo/EO_Phoenix/releases/latest" target="_blank" rel="noopener noreferrer">GitHub repo</a>.</p>
 
               <h4>Prepare Bluetooth</h4>
               <p>Use <strong>Windows+L</strong> to access the device UI, and navigate to the Bluetooth menu. Ensure Bluetooth is turned on for both the EO2 device and the PC.</p>
               <p>On the EO2 device, select the device code listed to make it visible to other devices. On the PC, open Bluetooth settings and choose <strong>Add device</strong>, then follow the prompts to pair with the frame. Your PC should appear in the device's Paired Devices list once connected.</p>
 
               <h4>Send the APK</h4>
-              <p>Navigate to the device's top-right overflow menu (three stacked dots) and select <strong>Show received files</strong>. On the PC, open Bluetooth settings and choose <strong>Send or receive files via Bluetooth</strong>, then <strong>Send files</strong>. Select your EO2 frame and choose <code>EO2_Phoenix.apk</code> to begin the transfer.</p>
+              <p>Navigate to the device's top-right overflow menu (three stacked dots) and select <strong>Show received files</strong>. On the PC, open Bluetooth settings and choose <strong>Send or receive files via Bluetooth</strong>, then <strong>Send files</strong>. Select your EO2 frame and choose the <code>eo-phoenix.apk</code> to begin the transfer.</p>
 
               <h4>Install on device</h4>
               <p>After the transfer completes on the frame, open the received file and install it. When installation finishes, choose <strong>Open</strong> to launch the app.</p>
