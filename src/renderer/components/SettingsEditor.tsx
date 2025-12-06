@@ -1374,6 +1374,7 @@ export default function SettingsEditor(){
                 <h4>Security</h4>
                 <p>Enable <strong>Unknown sources</strong> (or the equivalent "Install unknown apps") in the device Security settings to allow sideloading the EO Phoenix Android app.</p>
 
+                <h4>Scheduling Configuration Settings</h4>
                 <p>The EO Phoenix Android app requires a couple of device-level settings only if you intend to use scheduling. Follow the steps below to set them.</p>
 
                 <h4>Wi‑Fi</h4>
