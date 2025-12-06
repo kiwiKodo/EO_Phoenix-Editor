@@ -5,7 +5,7 @@ import SettingsEditor from './components/SettingsEditor'
 export default function App() {
   const [route, setRoute] = React.useState<'media'|'settings'>('media')
   // Get version from package.json (injected at build time)
-  const version = '0.3.2'
+  const version = '0.3.3'
   return (
     <div className="app">
       <header className="topbar">
