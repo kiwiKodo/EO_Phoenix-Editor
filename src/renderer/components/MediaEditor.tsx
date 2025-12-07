@@ -280,7 +280,7 @@ export default function MediaEditor() {
     if (!canvas) return
     const ctx = canvas.getContext('2d')!
     ctx.clearRect(0,0,canvas.width,canvas.height)
-    ctx.fillStyle = '#222'
+    ctx.fillStyle = '#3a3a3a'
     ctx.fillRect(0,0,canvas.width,canvas.height)
 
     // Draw each slot's image constrained to its region
